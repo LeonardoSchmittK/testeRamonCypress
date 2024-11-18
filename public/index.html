@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Search</title>
+      <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokémon Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #333;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #007bff;
+    }
+
+    #pokemonForm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
+      margin-bottom: 10px;
+      border: 2px solid #007bff;
+      border-radius: 5px;
+      outline: none;
+    }
+
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #pokemonDetails {
+      margin-top: 20px;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 300px;
+      margin: 20px auto;
+    }
+    
+
+    .imageContainer {
+      display: flex;
+      flex-direction: row;
+    }
+
+  </style>
+</head>
+
+    </style>
+  </head>
+  <body>
+    <h1>Pesquise o Pokémon</h1>
+
+    <form id="pokemonForm">
+      <label for="pokemonName">Digite o nome do Pokémon:</label>
+      <input type="text" id="pokemonName" name="pokemonName" required />
+      <button type="submit">Pesquisar</button>
+    </form>
+
+    <div id="pokemonDetails" style="display: none">
+      <h2>Lista técnica</h2>
+      <p><strong>Nome:</strong> <span id="pokemonNameDisplay"></span></p>
+      <p><strong>Tipo:</strong> <span id="pokemonTypeDisplay"></span></p>
+      <p><strong>Altura:</strong> <span id="pokemonHeight"></span></p>
+      <p><strong>Peso:</strong> <span id="pokemonWeight"></span></p>
+      <div class="imageContainer">
+        <img class="pokemonImage" id="pokemonImage" alt="Pokémon Image" width="200" />
+        <img class="pokemonImage" id="pokemonImageFront" alt="Pokémon Image" width="200" />
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("pokemonForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const pokemonName = document
+            .getElementById("pokemonName")
+            .value.toLowerCase();
+          const pokemonDetailsDiv = document.getElementById("pokemonDetails");
+
+          pokemonDetailsDiv.style.display = "none";
+
+          try {
+            const response = await fetch(
+              `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+            );
+            if (!response.ok) {
+              throw new Error("Pokémon incorreto");
+            }
+
+            const pokemonData = await response.json();
+            console.log(pokemonData.types[0].type.name);
+            let types = []
+            pokemonData.types.forEach(type=>{
+              types.push(type.type.name)
+            })
+
+            document.getElementById("pokemonNameDisplay").textContent =
+              pokemonData.name;
+              document.getElementById("pokemonTypeDisplay").textContent =
+              types.join(" ");
+            document.getElementById("pokemonHeight").textContent =
+              pokemonData.height;
+            document.getElementById("pokemonWeight").textContent =
+              pokemonData.weight;
+            document.getElementById("pokemonImage").src =
+              pokemonData.sprites.back_default;
+              document.getElementById("pokemonImageFront").src =
+              pokemonData.sprites.front_default;
+
+            pokemonDetailsDiv.style.display = "block";
+          } catch (error) {
+            confirm(error.message);
+          }
+        });
+    </script>
+  </body>
+</html>
